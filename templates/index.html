@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Bundle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+
+        body {
+            color: #664f35;
+            font-family: "Cabin", sans-serif;
+            text-align: center;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            width: 450px;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+        }
+        .register {
+            font-size: large;
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            background-color: #664f35;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            margin: 10px;
+            transition: 0.1s ease;
+        }
+        .register:hover {
+            color: #664f35;
+            background: none;
+            border: #664f35 1px solid;
+        }
+        .login {
+            font-size: medium;
+            padding: 5px;
+            border-radius: 6px;
+            color: white;
+            background: #664f35;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            margin: 10px;
+            transition: 0.1s ease;
+        }
+        .login:hover {
+            color: #664f35;
+            background: none;
+            border: #664f35 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <img src="/static/logo.png">
+        <div class="links">
+            <a href="/register" class="register">Créer un wallet</a>
+            <a href="/login" class="login">Connecter un wallet existant</a>
+        </div>
+    </div>
+</body>
+</html>

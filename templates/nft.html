@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Bundle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+
+        html {
+            text-align: center;
+            font-family: "Cabin", sans-serif;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .NFTInfos {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .NFTInfos img {
+            width: 500px;
+            margin: 25px;
+            border-radius: 15px;
+        }
+        .history {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 25px;
+        }
+        .history h2 {
+            margin: 25px;
+        }
+        .history table {
+            background-color: #664f354b;
+            border-radius: 10px;
+        }
+        .history th {
+            font-size: large;
+            background-color: #664f35c4;
+            padding: 10px;
+        }
+        .history th:first-child{ border-top-left-radius: 8px; }
+        .history th:last-child{ border-top-right-radius: 8px; }
+        .history td {
+            padding: 5px;
+        }
+        .history tr:hover {
+            transition: 0.1s ease;
+            background-color: #664f3550;
+        }
+    </style>
+</head>
+<body>
+    {% include "partials/header.htm" %}
+
+    <div class="container">
+        <div class="NFTInfos">
+            <img src="{{ infos.data }}">
+
+            <h1>{{ infos.nft_name }}</h1>
+            <h4>par {{ infos.artist }}</h4>
+        </div>
+        
+        <div class="history">
+            <h2>Historique des transactions :</h2>
+
+            <table>
+                <tr>
+                    <th>De</th>
+                    <th>À</th>
+                </tr>
+                {% for i, tx in infos.history | enumerate %}
+                    <tr>
+                        <td>{% if i > 0 %}{{ infos.history[i-1] }}{% else %}{{ infos.artist }}{% endif %}</td>
+                        <td>{{ tx }}</td>
+                    </tr>
+                {% endfor %}
+                
+            </table>
+        </div>
+    </div>
+</body>
+</html>

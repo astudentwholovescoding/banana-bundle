@@ -1,0 +1,89 @@
+import os
+import io
+import base64
+import datetime
+from PIL import Image
+from flask import Flask, render_template, session, redirect, request
+
+from blockchain import BlockChain
+from blocks import Block
+from wallets import Wallet
+from tx import Tx, MintTx
+
+app = Flask(__name__)
+app.secret_key = os.urandom(32)
+app.jinja_env.filters['enumerate'] = enumerate
+
+@app.route('/')
+def index():
+    if session.get('privateKey'):
+        return redirect('/home')
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    session['privateKey'] = request.form.get('privateKey')
+    return redirect('/')
+
+@app.route('/register')
+def register():
+    if session.get('privateKey'):
+        return redirect('/home')
+    new_wallet = Wallet()
+    session['privateKey'] = new_wallet.private_key_hex
+    return redirect('/home')
+
+@app.route('/home')
+def home():
+    last_transactions = BLOCKCHAIN.blocks[-10:]
+    return render_template('home.html')
+
+@app.route('/wallet')
+def wallet_route():
+    if session.get('privateKey') is None:
+        return redirect('/')
+    wallet = Wallet.from_private_key_hex(session.get('privateKey'))
+
+    owned_nfts = BLOCKCHAIN.get_wallet_nfts(wallet.address)
+    owned_nfts = [BLOCKCHAIN.get_nft_infos(token_id) for token_id in owned_nfts]
+    owned_nfts.sort(key=lambda x: x['nft_name'])
+
+    return render_template('wallet.html', walletAddress=wallet.address, ownedNFTs=owned_nfts)
+
+@app.route('/new-nft', methods=['GET', 'POST'])
+def create_nft():
+    if request.method == 'GET':
+        return render_template('new_nft.html', artistName=session.get('artistName'))
+    
+    artist_wallet = Wallet.from_private_key_hex(session.get('privateKey'))
+
+    qty = int(request.form.get('qty', 1))
+    data_file = request.files['data']
+    data = Image.open(data_file.stream)
+    data = data.resize((254, 254))
+    data_byte_arr = io.BytesIO()
+    data.save(data_byte_arr, format='PNG')
+    data_byte_arr = data_byte_arr.getvalue()
+    data_base64 = base64.b64encode(data_byte_arr).decode('utf-8')
+
+    for _ in range(qty if qty <= 50 else 50):
+        new_nft = MintTx(artist_wallet.address, request.form.get('NFTName'), request.form.get('artistName'), f"data:image/png;base64,{data_base64}", datetime.datetime.now())
+        BLOCKCHAIN.add_block(new_nft.to_json())
+    BLOCKCHAIN.save()
+    session['artistName'] = request.form.get('artistName')
+    return redirect('/')
+
+@app.route('/nft/<token_id>')
+def nft(token_id):
+    infos = BLOCKCHAIN.get_nft_infos(token_id)
+    return render_template('nft.html', infos=infos)
+
+if __name__ == '__main__':
+    if os.path.exists('blockchain.json'):
+        BLOCKCHAIN = BlockChain.load()
+    else:
+        BLOCKCHAIN = BlockChain()
+
+    app.run(host='0.0.0.0', port=2010, debug=True)

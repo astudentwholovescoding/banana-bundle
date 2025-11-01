@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Bundle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+
+        body {
+            color: #664f35;
+            font-family: "Cabin", sans-serif;
+            text-align: center;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            width: 450px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            font-family: "Cabin", sans-serif;
+            border: 1px solid #664f35;
+            border-radius: 6px;
+        }
+        button {
+            font-family: "Cabin", sans-serif;
+            font-size: medium;
+            padding: 5px;
+            border-radius: 6px;
+            color: white;
+            background-color: #664f35;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            margin: 10px;
+            transition: 0.1s ease;
+        }
+        button:hover {
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <img src="/static/logo.png">
+        <form action="/login" method="post">
+            <h2>Veuillez entrer votre clé privée :</h2>
+            <input type="text" name="privateKey">
+            <button>Valider</button>
+        </form>
+    </div>
+</body>
+</html>
