@@ -90,18 +90,19 @@ def blockchain(method):
 
 
 if __name__ == '__main__':
+    nodes = []
+
     if os.path.exists(BLOCKCHAIN_FILE):
         BLOCKCHAIN = BlockChain.load()
     else:
         node_ip = input("Please input the ip of another node to load the blockchain (empty to create another blockchain) : ")
-        nodes = []
 
         if node_ip:
-            blockchain_page = requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/ping')
+            blockchain_page = requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/getBlockchain')
             if blockchain_page.status_code == 200:
                 blockchain_json = blockchain_page.json()
                 BLOCKCHAIN = BlockChain.load(blockchain_json=blockchain_json)
-                nodes = json.loads(requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeList'))
+                nodes = requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeList').json()
                 requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeSubscribe')
             else:
                 print('Node seems down, creating new blockchain...')
