@@ -4,14 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banana Bundle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 150px;
+        }
+        form h2 {
+            font-family: "Cabin", sans-serif;
+            color: #664f35;
+        }
+        form input {
+            margin: 10px;
+            border-radius: 3px;
+            padding: 5px;
+        }
+        form button {
+            padding: 6px;
+            color: white;
+            background: #664f35;
+            border: #664f35 1px solid;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
     {% include "partials/header.htm" %}
 
     <form action="/new-nft" method="post" enctype="multipart/form-data">
+        <h2>Choisissez une image pour le NFT :</h2>
         <input type="file" name="data" accept="image/*" required>
+        <h2>Choisissez un nom pour le NFT :</h2>
         <input type="text" name="NFTName" required>
+        <h2>Quel est votre nom d'artiste ?</h2>
         <input type="text" name="artistName" {% if artistName %}value="{{ artistName }}"{% endif %} required>
+        <h2>Quelle quantité de NFT faut-il faire ?</h2>
         <input type="number" name="qty" value="1" required>
         <button>Valider</button>
     </form>

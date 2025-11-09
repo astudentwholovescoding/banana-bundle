@@ -1,8 +1,10 @@
-from blocks import Block
 import os
 import json
 import datetime
 from ecdsa import VerifyingKey, SECP256k1
+
+from blocks import Block
+from config import ENV
 
 
 class BlockChain:
@@ -68,7 +70,7 @@ class BlockChain:
                     
         return True
     
-    def save(self, filename='blockchain.json'):
+    def save(self, filename=ENV['BLOCKCHAIN_FILE']):
         if self.is_valid():
             with open(filename, 'w') as blockchain_file:
                 json.dump([block.to_json() for block in self.blocks], blockchain_file, indent=2)
@@ -108,7 +110,14 @@ class BlockChain:
         return data
     
     @staticmethod
-    def load(filename='blockchain.json'):
+    def load(filename=ENV['BLOCKCHAIN_FILE'], blockchain_json=None):
+        if blockchain_json:
+            blockchain = BlockChain()
+            blockchain.blocks = []
+            for block_json in blockchain_json:
+                blockchain.blocks.append(Block.from_json(block_json))
+            return blockchain
+        
         if os.path.exists(filename):
             with open(filename, 'r') as blockchain_file:
                 blockchain_json = json.load(blockchain_file)
@@ -119,15 +128,3 @@ class BlockChain:
                 blockchain.blocks.append(Block.from_json(block_json))
 
             return blockchain
-
-
-if __name__ == '__main__':
-    blockchain = BlockChain()
-    blockchain.add_block('NiloLeGoat')
-
-    for block in blockchain.blocks:
-        print(f'Block {block.hash}:\n  Previous_hash : {block.previous_block_hash}\n  Data : {block.data}')
-
-    blockchain.save()
-
-    print(blockchain.is_valid())

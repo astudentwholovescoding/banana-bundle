@@ -2,13 +2,16 @@ import os
 import io
 import base64
 import datetime
+import requests
 from PIL import Image
 from flask import Flask, render_template, session, redirect, request
 
+from config import ENV
 from blockchain import BlockChain
 from blocks import Block
 from wallets import Wallet
 from tx import Tx, MintTx
+from blockchainAPI import BlockchainAPI
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -80,10 +83,26 @@ def nft(token_id):
     infos = BLOCKCHAIN.get_nft_infos(token_id)
     return render_template('nft.html', infos=infos)
 
+@app.route('/blockchain/<method>')
+def blockchain(method):
+    return BLOCKCHAIN_API.call(method, request.args)
+
+
 if __name__ == '__main__':
-    if os.path.exists('blockchain.json'):
+    if os.path.exists(ENV['BLOCKCHAIN_FILE']):
         BLOCKCHAIN = BlockChain.load()
     else:
-        BLOCKCHAIN = BlockChain()
+        node_ip = input("Please input the ip of another node to load the blockchain (empty to create another blockchain) : ")
+        if node_ip:
+            blockchain_page = requests.get(f'http://{node_ip}:{ENV['APP_PORT']}/blockchain/getBlockchain')
+            if blockchain_page.status_code == 200:
+                blockchain_json = blockchain_page.json()
+                BLOCKCHAIN = BlockChain.load(blockchain_json=blockchain_json)
+            else:
+                BLOCKCHAIN = BlockChain()
+        else:
+            BLOCKCHAIN = BlockChain()
+    
+    BLOCKCHAIN_API = BlockchainAPI()
 
-    app.run(host='0.0.0.0', port=2010, debug=True)
+    app.run(host='0.0.0.0', port=ENV['APP_PORT'], debug=True)
