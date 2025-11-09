@@ -55,7 +55,7 @@ class BlockchainAPI:
         timestamp = datetime.datetime.fromisoformat(request.args.get('timestamp'))
         hash = request.args.get('hash')
 
-        if BLOCKCHAIN.blocks[-1]['hash'] == previous_block_hash:
+        if BLOCKCHAIN.blocks[-1].get_hash() == previous_block_hash:
             BLOCKCHAIN.add_block(data, timestamp)
             if BLOCKCHAIN.blocks[-1].get_hash() == hash and BLOCKCHAIN.is_valid:
                 BLOCKCHAIN.save()
