@@ -94,6 +94,8 @@ if __name__ == '__main__':
         BLOCKCHAIN = BlockChain.load()
     else:
         node_ip = input("Please input the ip of another node to load the blockchain (empty to create another blockchain) : ")
+        nodes = []
+
         if node_ip:
             blockchain_page = requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/ping')
             if blockchain_page.status_code == 200:
@@ -102,6 +104,7 @@ if __name__ == '__main__':
                 nodes = json.loads(requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeList'))
                 requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeSubscribe')
             else:
+                print('Node seems down, creating new blockchain...')
                 BLOCKCHAIN = BlockChain()
         else:
             BLOCKCHAIN = BlockChain()
@@ -109,5 +112,6 @@ if __name__ == '__main__':
     BLOCKCHAIN.save()
     
     BLOCKCHAIN_API = BlockchainAPI()
+    BLOCKCHAIN_API.nodes = nodes
 
     app.run(host='0.0.0.0', port=APP_PORT, debug=True)
