@@ -52,6 +52,25 @@
             transition: 0.1s ease;
             background-color: #664f3550;
         }
+        .transaction button {
+            font-family: "Cabin", sans-serif;
+            font-size: medium;
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            background-color: #664f35;
+            text-decoration: none;
+            border: none;
+            transition: 0.1s ease;
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+        }
+        .transaction button:hover {
+            color: #664f35;
+            background-color: white;
+            border: 1px solid #664f35;
+        }
     </style>
 </head>
 <body>
@@ -82,6 +101,11 @@
                 
             </table>
         </div>
+        {% if infos.history[-1] == userAddress %}
+            <div class="transaction">
+                <button onclick="document.location.href='/send/{{ infos.token_id }}'">Échanger</button>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

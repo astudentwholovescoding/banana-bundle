@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Bundle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 150px;
+        }
+        form h2 {
+            font-family: "Cabin", sans-serif;
+            color: #664f35;
+        }
+        form input {
+            margin: 10px;
+            border-radius: 3px;
+            padding: 5px;
+        }
+        form button {
+            padding: 6px;
+            color: white;
+            background: #664f35;
+            border: #664f35 1px solid;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    {% include "partials/header.htm" %}
+
+    <form method="post">
+        <h2>À qui voulez-vous envoyer votre NFT ?</h2>
+        <input type="text" name="recipientAddress" required>
+        <button type="submit">Envoyer</button>
+    </form>
+</body>
+</html>

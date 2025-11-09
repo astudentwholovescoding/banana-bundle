@@ -82,7 +82,34 @@ def create_nft():
 @app.route('/nft/<token_id>')
 def nft(token_id):
     infos = BLOCKCHAIN.get_nft_infos(token_id)
-    return render_template('nft.html', infos=infos)
+    if session.get('privateKey'):
+        wallet = Wallet.from_private_key_hex(session.get('privateKey'))
+        user_address = wallet.address
+    else:
+        user_address = ''
+    return render_template('nft.html', infos=infos, userAddress=user_address)
+
+@app.route('/send/<token_id>', methods=['GET', 'POST'])
+def send(token_id):
+    global BLOCKCHAIN
+    if session.get('privateKey') is None:
+        return redirect('/')
+    wallet = Wallet.from_private_key_hex(session.get('privateKey'))
+    infos = BLOCKCHAIN.get_nft_infos(token_id)
+    if infos['history'][-1] != wallet.address:
+        return redirect(f'/nft/{token_id}')
+    if request.method == 'GET':
+        return render_template('send.html', infos=infos)
+    else:
+        recipient_address = request.form.get('recipientAddress', wallet.address)
+        new_tx = Tx(wallet.address, recipient_address, token_id, datetime.datetime.now())
+        new_tx.sign(wallet)
+        BLOCKCHAIN.add_block(new_tx.to_json())
+        if BLOCKCHAIN.is_valid():
+            BLOCKCHAIN.save()
+            return redirect(f'/nft/{token_id}')
+        else:
+            BLOCKCHAIN = BlockChain.load()
 
 @app.route('/blockchain/<method>')
 def blockchain(method):
