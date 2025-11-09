@@ -1,12 +1,13 @@
 import os
 import io
+import json
 import base64
 import datetime
 import requests
 from PIL import Image
 from flask import Flask, render_template, session, redirect, request
 
-from config import ENV
+from config import *
 from blockchain import BlockChain
 from blocks import Block
 from wallets import Wallet
@@ -89,15 +90,17 @@ def blockchain(method):
 
 
 if __name__ == '__main__':
-    if os.path.exists(ENV['BLOCKCHAIN_FILE']):
+    if os.path.exists(BLOCKCHAIN_FILE):
         BLOCKCHAIN = BlockChain.load()
     else:
         node_ip = input("Please input the ip of another node to load the blockchain (empty to create another blockchain) : ")
         if node_ip:
-            blockchain_page = requests.get(f'http://{node_ip}:{ENV['APP_PORT']}/blockchain/getBlockchain')
+            blockchain_page = requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/ping')
             if blockchain_page.status_code == 200:
                 blockchain_json = blockchain_page.json()
                 BLOCKCHAIN = BlockChain.load(blockchain_json=blockchain_json)
+                nodes = json.loads(requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeList'))
+                requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeSubscribe')
             else:
                 BLOCKCHAIN = BlockChain()
         else:
@@ -107,4 +110,4 @@ if __name__ == '__main__':
     
     BLOCKCHAIN_API = BlockchainAPI()
 
-    app.run(host='0.0.0.0', port=ENV['APP_PORT'], debug=True)
+    app.run(host='0.0.0.0', port=APP_PORT, debug=True)

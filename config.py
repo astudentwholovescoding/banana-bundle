@@ -1,4 +1,2 @@
-ENV = {
-    "BLOCKCHAIN_FILE": "blockchain.json",
-    "APP_PORT": 2010
-}
+BLOCKCHAIN_FILE = "blockchain.json"
+APP_PORT = 2010

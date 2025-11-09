@@ -4,7 +4,7 @@ import datetime
 from ecdsa import VerifyingKey, SECP256k1
 
 from blocks import Block
-from config import ENV
+from config import *
 
 
 class BlockChain:
@@ -70,7 +70,7 @@ class BlockChain:
                     
         return True
     
-    def save(self, filename=ENV['BLOCKCHAIN_FILE']):
+    def save(self, filename=BLOCKCHAIN_FILE):
         if self.is_valid():
             with open(filename, 'w') as blockchain_file:
                 json.dump([block.to_json() for block in self.blocks], blockchain_file, indent=2)
@@ -110,7 +110,7 @@ class BlockChain:
         return data
     
     @staticmethod
-    def load(filename=ENV['BLOCKCHAIN_FILE'], blockchain_json=None):
+    def load(filename=BLOCKCHAIN_FILE, blockchain_json=None):
         if blockchain_json:
             blockchain = BlockChain()
             blockchain.blocks = []

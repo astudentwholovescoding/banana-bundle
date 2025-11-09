@@ -1,7 +1,7 @@
 import json
 import requests
 
-from config import ENV
+from config import *
 
 class BlockchainAPI:
     def __init__(self):
@@ -22,7 +22,7 @@ class BlockchainAPI:
         return 'Service up'
 
     def node_subscribe(self, request):
-        if requests.get(f'http://{request.remote_addr}:{ENV['APP_PORT']}/blockchain/ping').status_code == 200:
+        if requests.get(f'http://{request.remote_addr}:{APP_PORT}/blockchain/ping').status_code == 200:
             if request.remote_addr == request.host.split(':')[0]:
                 return "A node can't subscribe to himself"
             self.nodes.append(request.remote_addr)
@@ -34,17 +34,17 @@ class BlockchainAPI:
         return json.dumps(self.nodes)
 
     def get_blockchain(self, request):
-        with open(ENV['BLOCKCHAIN_FILE']) as blockchain_file:
+        with open(BLOCKCHAIN_FILE) as blockchain_file:
             blockchain = json.load(blockchain_file)
         return json.dumps(blockchain)
     
     def get_length(self, request):
-        with open(ENV['BLOCKCHAIN_FILE']) as blockchain_file:
+        with open(BLOCKCHAIN_FILE) as blockchain_file:
             blockchain = json.load(blockchain_file)
         return str(len(blockchain))
     
     def get_block(self, request):
         block_id = int(request.args.get('id', '-1'))
-        with open(ENV['BLOCKCHAIN_FILE']) as blockchain_file:
+        with open(BLOCKCHAIN_FILE) as blockchain_file:
             blockchain = json.load(blockchain_file)
         return json.dumps(blockchain[block_id])
