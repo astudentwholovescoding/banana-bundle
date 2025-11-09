@@ -13,11 +13,11 @@ class BlockChain:
             genesis_block = Block.generate_genesis_block()
         self.blocks = [genesis_block]
 
-    def add_block(self, data):
+    def add_block(self, data, timestamp=datetime.datetime.now()):
         block = Block(
                 self.blocks[-1].hash,
                 json.dumps(data),
-                datetime.datetime.now()
+                timestamp
             )
         self.blocks.append(block)
     

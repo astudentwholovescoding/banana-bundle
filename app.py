@@ -107,6 +107,14 @@ def send(token_id):
         BLOCKCHAIN.add_block(new_tx.to_json())
         if BLOCKCHAIN.is_valid():
             BLOCKCHAIN.save()
+            last_block = BLOCKCHAIN.blocks[-1]
+            for node in BLOCKCHAIN_API.nodes:
+                requests.get(f'http://{node}:{APP_PORT}/blockchain/addBlock', params={
+                    "previous_block_hash": last_block.previous_block_hash,
+                    "data": last_block.data,
+                    "timestamp": last_block.timestamp.isoformat(),
+                    "hash": last_block.get_hash()
+                })
             return redirect(f'/nft/{token_id}')
         else:
             BLOCKCHAIN = BlockChain.load()
@@ -131,6 +139,7 @@ if __name__ == '__main__':
                 BLOCKCHAIN = BlockChain.load(blockchain_json=blockchain_json)
                 nodes = requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeList').json()
                 requests.get(f'http://{node_ip}:{APP_PORT}/blockchain/nodeSubscribe')
+                nodes.append(node_ip)
             else:
                 print('Node seems down, creating new blockchain...')
                 BLOCKCHAIN = BlockChain()
