@@ -85,7 +85,7 @@ def nft(token_id):
 
 @app.route('/blockchain/<method>')
 def blockchain(method):
-    return BLOCKCHAIN_API.call(method, request.args)
+    return BLOCKCHAIN_API.call(method, request)
 
 
 if __name__ == '__main__':
@@ -102,6 +102,8 @@ if __name__ == '__main__':
                 BLOCKCHAIN = BlockChain()
         else:
             BLOCKCHAIN = BlockChain()
+    
+    BLOCKCHAIN.save()
     
     BLOCKCHAIN_API = BlockchainAPI()
 
